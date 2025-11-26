@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Happy Birthday Sreenjoy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rye&family=Caveat:wght@700&family=Playfair+Display:wght@700;900&family=VT323&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --curtain-red: #800000;
+            --curtain-shadow: #3b0000;
+            --gold: #FFD700;
+            --gold-shine: #fff2b3;
+            --wood: #2d1b15;
+            --black: #050505;
+            --paper: #f4ecd8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            background-color: var(--black);
+            color: #fff;
+            font-family: 'Playfair Display', serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            touch-action: none;
+        }
+
+        /* --- CINEMATIC EFFECTS --- */
+        .film-grain {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 900;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        
+        .vignette {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 800;
+            background: radial-gradient(circle, transparent 50%, rgba(0,0,0,0.8) 100%);
+        }
+
+        /* --- LAYOUT --- */
+        .scene {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.5s;
+            z-index: 5;
+            padding: 10px;
+        }
+        .scene.active { display: flex; opacity: 1; z-index: 50; }
+
+        /* --- BACKGROUNDS --- */
+        .bg-stage {
+            background: radial-gradient(circle at 50% 30%, #2a2a2a 0%, #000 85%);
+        }
+        .bg-wood {
+            background: 
+                repeating-linear-gradient(90deg, #3e2723 0px, #3e2723 20px, #2a1a15 21px, #2a1a15 40px),
+                linear-gradient(to bottom, rgba(0,0,0,0.5), transparent);
+            background-blend-mode: multiply;
+        }
+
+        /* --- CURTAINS (Enhanced) --- */
+        .curtain-layer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 1000; display: flex;
+        }
+        .curtain {
+            width: 50%; height: 100%;
+            background: repeating-linear-gradient(90deg, var(--curtain-red), var(--curtain-red) 30px, var(--curtain-shadow) 30px, var(--curtain-shadow) 60px);
+            box-shadow: 0 0 80px black;
+            transition: transform 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+            position: relative;
+        }
+        .curtain::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 20%;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+        }
+        body.open-curtains .curtain.left { transform: translateX(-100%); }
+        body.open-curtains .curtain.right { transform: translateX(100%); }
+
+        /* --- MENU --- */
+        .spotlight-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 2; overflow: hidden;
+        }
+        .beam {
+            position: absolute; top: -50%; left: 50%;
+            width: 300px; height: 150vh;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.12), transparent 60%);
+            transform-origin: top center;
+            filter: blur(20px);
+            mix-blend-mode: overlay;
+        }
+        .beam-1 { animation: swing 8s infinite ease-in-out alternate; }
+        .beam-2 { animation: swing 9s infinite ease-in-out alternate-reverse; }
+
+        @keyframes swing {
+            from { transform: rotate(-25deg) translateX(-50%); }
+            to { transform: rotate(25deg) translateX(-50%); }
+        }
+
+        .hero-frame {
+            border: 12px solid #b8860b;
+            border-image: linear-gradient(to bottom right, #FFD700, #b8860b, #FFD700) 1;
+            background: #000; width: 220px; height: 280px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.9);
+            transform: rotate(-3deg); z-index: 10; margin-bottom: 20px;
+            overflow: hidden; position: relative;
+        }
+        .hero-frame img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; }
+        .hero-frame::after {
+            content: ''; position: absolute; inset: 0;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
+        }
+        
+        .hero-title {
+            font-family: 'Rye', serif;
+            font-size: 3rem; 
+            text-align: center; margin-bottom: 30px; z-index: 10;
+            line-height: 1.1;
+            background: linear-gradient(to bottom, #fff2b3, #FFD700, #b8860b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3));
+        }
+
+        .menu-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
+            z-index: 60; width: 100%; max-width: 380px;
+        }
+        .retro-btn {
+            background: linear-gradient(to bottom, #d32f2f, #b71c1c);
+            border: 2px solid #ff8a80; border-radius: 15px; height: 80px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; 
+            box-shadow: 0 8px 0 #7f0000, 0 15px 20px rgba(0,0,0,0.4), inset 0 2px 5px rgba(255,255,255,0.2);
+            position: relative; transition: transform 0.1s, box-shadow 0.1s;
+        }
+        .retro-btn:active { transform: translateY(6px); box-shadow: 0 2px 0 #7f0000; }
+        
+        .retro-btn.blue { 
+            background: linear-gradient(to bottom, #1e88e5, #1565c0); 
+            border-color: #90caf9;
+            box-shadow: 0 8px 0 #0d47a1, 0 15px 20px rgba(0,0,0,0.4); 
+        }
+        .retro-btn.blue:active { box-shadow: 0 2px 0 #0d47a1; }
+
+        .retro-btn.purple { 
+            background: linear-gradient(to bottom, #8e24aa, #6a1b9a);
+            border-color: #ce93d8;
+            box-shadow: 0 8px 0 #4a148c, 0 15px 20px rgba(0,0,0,0.4); 
+        }
+        .retro-btn.purple:active { box-shadow: 0 2px 0 #4a148c; }
+
+        .retro-btn.green { 
+            background: linear-gradient(to bottom, #43a047, #2e7d32);
+            border-color: #a5d6a7;
+            box-shadow: 0 8px 0 #1b5e20, 0 15px 20px rgba(0,0,0,0.4); 
+        }
+        .retro-btn.green:active { box-shadow: 0 2px 0 #1b5e20; }
+        
+        .retro-btn span { 
+            font-family: 'Rye'; font-size: 1rem; margin-top: 5px; 
+            text-transform: uppercase; color: #fff; text-shadow: 1px 1px 0 rgba(0,0,0,0.5); 
+            letter-spacing: 1px;
+        }
+        .retro-btn i { font-size: 1.8rem; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3)); }
+
+        .back-btn {
+            position: absolute; top: 20px; left: 20px;
+            background: rgba(0,0,0,0.7); border: 1px solid var(--gold);
+            color: var(--gold); padding: 10px 20px; font-family: 'Rye';
+            cursor: pointer; z-index: 100; border-radius: 30px; font-size: 0.9rem;
+            text-transform: uppercase; letter-spacing: 1px;
+            backdrop-filter: blur(5px);
+            transition: 0.2s;
+        }
+        .back-btn:hover { background: var(--gold); color: #000; }
+
+        /* --- SCENE 1: CAKE & ALCOHOL --- */
+        .cake-wrapper { position: relative; margin-top: 60px; cursor: pointer; transform-style: preserve-3d; }
+        .cake-tier {
+            position: relative; margin: 0 auto;
+            border-radius: 10px 10px 0 0;
+            box-shadow: inset -15px 0 30px rgba(0,0,0,0.2), 5px 0 15px rgba(0,0,0,0.3);
+        }
+        .tier-3 { width: 100px; height: 60px; background: linear-gradient(135deg, #ffcc80, #ffa726); border-bottom: 4px solid #e65100; z-index: 3;}
+        .tier-2 { width: 160px; height: 70px; background: linear-gradient(135deg, #fff, #f5f5f5); border-bottom: 4px solid #bdbdbd; z-index: 2;}
+        .tier-1 { width: 220px; height: 80px; background: linear-gradient(135deg, #5d4037, #3e2723); border-bottom: 4px solid #281814; z-index: 1;}
+        
+        .icing-drip {
+            position: absolute; top: 0; left: 0; width: 100%; height: 20px;
+            background: #ff4081; border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .icing-drip::after {
+            content: ''; position: absolute; top: 15px; width: 100%; height: 15px;
+            background: radial-gradient(circle at 15px 0, #ff4081 15px, transparent 16px);
+            background-size: 30px 20px;
+        }
+
+        .candle {
+            width: 14px; height: 40px; 
+            background: repeating-linear-gradient(45deg, #d50000, #d50000 5px, #fff 5px, #fff 10px);
+            position: absolute; top: -40px; left: 50%; transform: translateX(-50%);
+            border-radius: 4px; box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+        }
+        .flame {
+            width: 16px; height: 24px; background: #ff9100; border-radius: 50% 50% 20% 20%;
+            position: absolute; top: -20px; left: -1px; animation: flicker 0.1s infinite alternate;
+            box-shadow: 0 0 20px #ff6d00, 0 0 40px #ff9100;
+        }
+        @keyframes flicker { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(1.1); opacity: 1; } }
+        
+        .cut-animation .tier-3 { animation: slideOut 1.5s forwards ease-out; }
+        .cut-animation .tier-2 { animation: slideOut 1.5s 0.1s forwards ease-out; }
+        .cut-animation .tier-1 { animation: slideOut 1.5s 0.2s forwards ease-out; }
+        @keyframes slideOut { 100% { transform: translate(40px, 15px) rotate(8deg); opacity: 0.9; } }
+
+        /* Alcohol Animation */
+        .alcohol-container {
+            position: absolute; top: -50px; left: 50%; transform: translateX(-50%) scale(0);
+            font-size: 5rem; z-index: 20; opacity: 0; pointer-events: none;
+        }
+        .alcohol-active {
+            animation: popIn 0.5s forwards, shakeBottle 2s 0.5s infinite;
+        }
+        @keyframes popIn { 0% { opacity: 0; transform: translateX(-50%) scale(0) rotate(-15deg); } 100% { opacity: 1; transform: translateX(-50%) scale(1) rotate(-15deg); } }
+        @keyframes shakeBottle { 0%, 100% { transform: translateX(-50%) rotate(-15deg); } 50% { transform: translateX(-50%) rotate(-10deg); } }
+
+        .cork {
+            position: absolute; top: 0; left: 50%; width: 20px; height: 20px;
+            background: #8d6e63; border-radius: 4px;
+            display: none;
+        }
+        .cork-pop { display: block; animation: flyOff 1s forwards ease-out; }
+        @keyframes flyOff { 0% { transform: translate(-50%, 0); } 100% { transform: translate(100px, -200px) rotate(360deg); } }
+
+        /* --- SCENE 2: BOOTH --- */
+        .booth-frame {
+            background: #1a1a1a; border: 15px solid #333; border-radius: 20px;
+            padding: 25px; width: 95%; max-width: 360px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,1);
+            position: relative;
+        }
+        .booth-screen {
+            background: #000; height: 340px; margin-bottom: 25px;
+            border: 4px solid #555; display: flex; align-items: center; justify-content: center;
+            overflow: hidden; border-radius: 8px; position: relative;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+        }
+        /* Scanlines */
+        .booth-screen::before {
+            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2; background-size: 100% 2px, 3px 100%; pointer-events: none;
+        }
+        .booth-img { width: 100%; height: 100%; object-fit: contain; display: none; z-index: 1; }
+        .loading-msg { font-family: 'VT323'; color: #00e676; font-size: 2rem; text-shadow: 0 0 10px #00e676; text-align: center; line-height: 1.2; z-index: 1;}
+
+        /* --- SCENE 3: WALL --- */
+        .wall-content {
+            width: 100%; height: 100%; overflow-y: auto; padding: 80px 20px 20px 20px;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .paper-note {
+            background: #fff9c4; color: #3e2723; padding: 25px;
+            font-family: 'Caveat', cursive; font-size: 1.5rem; line-height: 1.5;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4); transform: rotate(-1deg);
+            margin-bottom: 40px; max-width: 420px; margin-left: auto; margin-right: auto;
+            position: relative; border-radius: 2px;
+        }
+        .paper-note::before {
+            content: ''; position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
+            width: 15px; height: 40px; background: rgba(255,255,255,0.4); 
+            border: 1px solid #aaa; box-shadow: 0 2px 2px rgba(0,0,0,0.2); transform: rotate(5deg);
+        }
+
+        .wall-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px 20px;
+        }
+        .hanging-frame {
+            width: 100%; max-width: 150px; height: 180px; margin: 0 auto; background: #fff;
+            padding: 10px 10px 35px 10px; position: relative;
+            transform-origin: top center; animation: sway 4s infinite ease-in-out alternate;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .hanging-frame img { width: 100%; height: 100%; object-fit: cover; filter: sepia(0.3) contrast(1.1); }
+        .hanging-frame::before {
+            content: ''; position: absolute; top: -25px; left: 50%; width: 4px; height: 25px;
+            background: linear-gradient(to right, #8d6e63, #5d4037);
+        }
+        .hanging-frame::after {
+            content: ''; position: absolute; top: -30px; left: 50%; width: 12px; height: 12px;
+            background: #aaa; border-radius: 50%; transform: translateX(-50%);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        @keyframes sway { from { transform: rotate(-2deg); } to { transform: rotate(2deg); } }
+
+        /* --- SCENE 4: GAME --- */
+        .game-area {
+            width: 100%; height: 85vh; display: flex; align-items: center; justify-content: center;
+            position: relative;
+        }
+        canvas { 
+            border: 8px solid #fff; 
+            border-radius: 4px;
+            background: #87CEEB; 
+            touch-action: none;
+            box-shadow: 0 0 30px rgba(0,0,0,0.6);
+        }
+        
+        .start-btn-overlay {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+        .game-btn {
+            background: linear-gradient(to bottom, #FFD700, #ffb300); 
+            border: 3px solid #fff; padding: 15px 50px;
+            font-family: 'Rye'; font-size: 1.8rem; color: #3e2723; cursor: pointer;
+            box-shadow: 0 8px 0 #b27d12, 0 15px 20px rgba(0,0,0,0.4); 
+            border-radius: 50px;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+            transition: all 0.1s;
+        }
+        .game-btn:active { transform: translateY(6px); box-shadow: 0 3px 0 #b27d12; }
+
+        .game-overlay-msg {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(10, 10, 10, 0.95); padding: 40px; text-align: center;
+            border: 4px solid var(--gold); display: none; width: 90%; max-width: 400px; z-index: 200;
+            border-radius: 15px;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.2);
+        }
+        .loss-title {
+            color: #ff3333; font-family:'VT323'; font-size:4.5rem; margin-bottom: 10px;
+            text-shadow: 4px 4px 0 #000;
+        }
+        .loss-text {
+            font-size: 1.8rem; margin: 25px 0; color: #fff; font-family: 'Caveat'; line-height: 1.2;
+        }
+        #scoreVal { font-family: 'VT323'; font-size: 2rem; color: #FFD700; }
+
+    </style>
+</head>
+<body>
+
+    <!-- OVERLAYS -->
+    <div class="film-grain"></div>
+    <div class="vignette"></div>
+    <div class="curtain-layer" id="curtains">
+        <div class="curtain left"></div>
+        <div class="curtain right"></div>
+    </div>
+
+    <!-- SCENE 0: MENU -->
+    <div id="scene-0" class="scene active bg-stage">
+        <div class="spotlight-container">
+            <div class="beam beam-1"></div>
+            <div class="beam beam-2"></div>
+        </div>
+        
+        <div class="hero-frame">
+            <img src="sreenjoy.jpg" alt="Sreenjoy" onerror="this.src='https://via.placeholder.com/220x280?text=Sreenjoy'">
+        </div>
+        <div class="hero-title">Happy Birthday<br>Sreenjoy</div>
+        
+        <div class="menu-grid">
+            <div class="retro-btn" onclick="switchScene(1)">
+                <i>🎂</i><span>Cut Through</span>
+            </div>
+            <div class="retro-btn blue" onclick="switchScene(2)">
+                <i>📸</i><span>Photo Booth</span>
+            </div>
+            <div class="retro-btn green" onclick="switchScene(3)">
+                <i>🖼️</i><span>Us</span>
+            </div>
+            <div class="retro-btn purple" onclick="switchScene(4)">
+                <i>🎮</i><span>Game of Life</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCENE 1: CAKE -->
+    <div id="scene-1" class="scene bg-stage">
+        <button class="back-btn" onclick="switchScene(0)">← BACK</button>
+        <h2 style="color:var(--gold); margin-top:30px; font-size: 3rem; text-shadow: 0 5px 10px rgba(0,0,0,0.5);">Make a Wish!</h2>
+        
+        <div class="cake-wrapper" id="theCake" onclick="cutTheCake()">
+            <div class="alcohol-container" id="alcoholContainer">
+                🍾<div class="cork" id="cork"></div>
+            </div>
+            <div class="candle"><div class="flame"></div></div>
+            <div class="cake-tier tier-3"><div class="icing-drip"></div></div>
+            <div class="cake-tier tier-2"><div class="icing-drip" style="background:#f48fb1"></div></div>
+            <div class="cake-tier tier-1"><div class="icing-drip" style="background:#a1887f"></div></div>
+        </div>
+        
+        <p id="cakeMsg" style="margin-top:50px; color:#ddd; font-family:'Caveat'; font-size:1.8rem; text-shadow: 0 2px 4px #000;">Tap to Cut the Cake</p>
+    </div>
+
+    <!-- SCENE 2: BOOTH -->
+    <div id="scene-2" class="scene bg-stage">
+        <button class="back-btn" onclick="switchScene(0)">← BACK</button>
+        <div class="booth-frame">
+            <div class="booth-screen">
+                <div id="boothText" class="loading-msg">READY...</div>
+                <img id="boothImg" class="booth-img" src="" alt="Memory">
+            </div>
+            <button class="retro-btn blue" style="width:100%; height:70px;" onclick="runBooth()"><span>RELOAD MEMORY</span></button>
+        </div>
+    </div>
+
+    <!-- SCENE 3: WALL -->
+    <div id="scene-3" class="scene bg-wood" style="display:none;">
+        <button class="back-btn" onclick="switchScene(0)" style="background:rgba(0,0,0,0.8); position:fixed; z-index:999;">← BACK</button>
+        <div class="wall-content">
+            <div class="paper-note">
+                "Happy Birthday Bro! Honestly, looking back, you were easily the best part of my growing up. From the stupid pranks to the serious talks, you basically helped shape who I am today. Love you man."
+            </div>
+            <div class="wall-grid" id="wallGrid"></div>
+        </div>
+    </div>
+
+    <!-- SCENE 4: GAME -->
+    <div id="scene-4" class="scene bg-stage">
+        <button class="back-btn" onclick="switchScene(0)">← QUIT</button>
+        
+        <div class="game-area">
+            <canvas id="gameCanvas"></canvas>
+            
+            <div id="startBtnOverlay" class="start-btn-overlay">
+                <button class="game-btn" onclick="startGame()">START GAME</button>
+            </div>
+        </div>
+        
+        <div style="font-family:'VT323'; font-size:1.8rem; margin-top:10px; color:#FFD700; text-shadow:0 0 5px #ff9100;">Score: <span id="scoreVal">0</span></div>
+        
+        <div id="gameOverlay" class="game-overlay-msg">
+            <div class="loss-title">YOU LOST!</div>
+            <div id="lossMsg" class="loss-text">...</div>
+            <button class="game-btn" style="font-size:1.5rem; padding:10px 40px;" onclick="resetGameUI()">TRY AGAIN</button>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. SETUP ---
+        setTimeout(() => document.body.classList.add('open-curtains'), 300);
+
+        function switchScene(id) {
+            // Stop audio when leaving game scene
+            if(document.getElementById('scene-4').classList.contains('active')) {
+                stopAllAudio();
+                isGameRunning = false;
+            }
+
+            document.querySelectorAll('.scene').forEach(s => {
+                s.classList.remove('active');
+                setTimeout(() => { if(!s.classList.contains('active')) s.style.display = 'none'; }, 500);
+            });
+            const target = document.getElementById(`scene-${id}`);
+            target.style.display = id === 3 ? 'block' : 'flex'; 
+            setTimeout(() => target.classList.add('active'), 50);
+
+            if(id === 4) initGame();
+            if(id === 3) loadWall();
+        }
+
+        // --- 2. CAKE & ALCOHOL ---
+        function cutTheCake() {
+            const cake = document.getElementById('theCake');
+            const msg = document.getElementById('cakeMsg');
+            const bottle = document.getElementById('alcoholContainer');
+            const cork = document.getElementById('cork');
+            
+            if(cake.classList.contains('cut-animation')) return;
+
+            cake.classList.add('cut-animation');
+            document.querySelector('.candle').style.opacity = '0';
+            
+            // Trigger Alcohol Animation
+            setTimeout(() => {
+                bottle.classList.add('alcohol-active');
+                // Pop Cork after a second
+                setTimeout(() => {
+                    cork.classList.add('cork-pop');
+                    // Foam/Confetti Spray
+                    for(let i=0; i<30; i++) {
+                        createFoam(window.innerWidth/2, window.innerHeight/2 - 100);
+                    }
+                }, 1000);
+            }, 500);
+
+            msg.innerHTML = "Happy Birthday Sreenjoy! 🥳<br>Cheers to the Legend!";
+            msg.style.color = "var(--gold)";
+            msg.style.fontSize = "2.2rem";
+            
+            // Confetti
+            for(let i=0; i<80; i++) {
+                createConfetti(window.innerWidth/2, window.innerHeight/2);
+            }
+        }
+
+        function createConfetti(x, y) {
+            const colors = ['#f44336', '#ffeb3b', '#2196f3', '#4caf50', '#FFD700'];
+            const c = document.createElement('div');
+            c.style.cssText = `position:fixed; left:${x}px; top:${y}px; width:12px; height:12px; background:${colors[Math.floor(Math.random()*5)]}; z-index:99; pointer-events:none; transition:1s ease-out; border-radius:2px; box-shadow:0 2px 2px rgba(0,0,0,0.2);`;
+            document.body.appendChild(c);
+            
+            const destX = (Math.random() - 0.5) * 500;
+            const destY = (Math.random() - 0.5) * 500;
+            const rot = Math.random() * 720;
+
+            setTimeout(() => {
+                c.style.transform = `translate(${destX}px, ${destY}px) rotate(${rot}deg)`;
+                c.style.opacity = 0;
+            }, 10);
+            setTimeout(() => c.remove(), 1000);
+        }
+        
+        function createFoam(x, y) {
+            const c = document.createElement('div');
+            c.style.cssText = `position:fixed; left:${x}px; top:${y}px; width:8px; height:8px; background:#fff2b3; z-index:99; pointer-events:none; transition:0.8s ease-out; border-radius:50%; box-shadow:0 2px 5px rgba(255,255,255,0.5);`;
+            document.body.appendChild(c);
+            
+            const destX = (Math.random() - 0.5) * 200;
+            const destY = -(Math.random() * 300) - 50; 
+
+            setTimeout(() => {
+                c.style.transform = `translate(${destX}px, ${destY}px) scale(0)`;
+                c.style.opacity = 0;
+            }, 10);
+            setTimeout(() => c.remove(), 800);
+        }
+
+        // --- 3. BOOTH ---
+        const boothTexts = [
+            "RELOADING MEMORIES...", 
+            "INITIALIZING HAPPINESS...", 
+            "LOADING THE BEST LIFE...", 
+            "ENHANCING SWAG...", 
+            "FOUND CORE MEMORY!"
+        ];
+        
+        function runBooth() {
+            const txt = document.getElementById('boothText');
+            const img = document.getElementById('boothImg');
+            img.style.display = 'none';
+            txt.style.display = 'block';
+            
+            let i = 0;
+            const interval = setInterval(() => {
+                txt.innerText = boothTexts[i % boothTexts.length];
+                i++;
+                if(i > 5) {
+                    clearInterval(interval);
+                    showPhoto();
+                }
+            }, 600);
+        }
+        function showPhoto() {
+            const img = document.getElementById('boothImg');
+            document.getElementById('boothText').style.display = 'none';
+            const id = Math.floor(Math.random() * 50) + 1;
+            img.src = `s (${id}).jpg`;
+            img.onerror = () => img.src = 'https://via.placeholder.com/300?text=Photo+Missing';
+            img.style.display = 'block';
+        }
+
+        // --- 4. WALL ---
+        let wallLoaded = false;
+        function loadWall() {
+            if(wallLoaded) return;
+            const grid = document.getElementById('wallGrid');
+            for(let i=1; i<=8; i++) {
+                grid.innerHTML += `
+                    <div class="hanging-frame" style="animation-delay:-${i}s">
+                        <img src="ss(${i}).jpg" onerror="this.src='https://via.placeholder.com/150?text=Us+${i}'">
+                    </div>`;
+            }
+            wallLoaded = true;
+        }
+
+        // --- 5. GAME ---
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const playerImg = new Image();
+        playerImg.src = 'player.png';
+        
+        // AUDIO INIT
+        const scoreAudio = new Audio('audio1.mp3');
+        scoreAudio.playbackRate = 2.0; // 2x faster (requested again)
+        const crashAudio = new Audio('audio2.mp3');
+        let audioTimeouts = [];
+
+        function playSmartAudio(audio) {
+            audio.pause();
+            audio.currentTime = 0;
+            if(audio === scoreAudio) audio.playbackRate = 2.0; // Ensure rate is set
+            
+            audio.play().catch(e => console.log('Audio play error:', e));
+            
+            // Stop after 7 seconds
+            let id = setTimeout(() => {
+                audio.pause();
+                audio.currentTime = 0;
+            }, 7000);
+            audioTimeouts.push(id);
+        }
+
+        function stopAllAudio() {
+            scoreAudio.pause(); scoreAudio.currentTime = 0;
+            crashAudio.pause(); crashAudio.currentTime = 0;
+            audioTimeouts.forEach(id => clearTimeout(id));
+            audioTimeouts = [];
+        }
+        
+        let gameLoop, bird, pillars, score, isGameRunning = false;
+        let gameSpeed = 1.8; // Lower start speed (EASIER)
+        let frames = 0;
+        let particles = [];
+
+        // 50 Expanded Difficulties
+        const difficulties = [
+            {t:"Exams", m:"Bro, marks are just numbers. Your potential is infinite. Keep grinding."},
+            {t:"Traffic", m:"Patience is a superpower, bro. The destination isn't running away."},
+            {t:"No WiFi", m:"Go touch some grass, bro. The real world has better resolution anyway."},
+            {t:"Haters", m:"They just jealous cause they ain't us. Let them talk, you keep walking."},
+            {t:"Monday", m:"Coffee up and conquer, bro. It's just another day to be awesome."},
+            {t:"Lag", m:"It's definitely the ping, bro. Your skills are lag-free."},
+            {t:"Low Bat", m:"Recharge yourself, King. Even superheroes need a nap."},
+            {t:"Drama", m:"Ignore the noise, focus on the goal. Stay in your lane, stay unbothered."},
+            {t:"Rain", m:"You won't melt, you're solid gold. A little water just makes you shine."},
+            {t:"Heartbreak", m:"Her loss, King. Keep your head up, your crown is falling."},
+            {t:"Empty Wallet", m:"Bro, money is paper, but your class is permanent. The bag is coming soon."},
+            {t:"Bad Haircut", m:"Bro, hair grows back, but that confidence needs to stay 100 all day."},
+            {t:"Forgot Password", m:"Reset it like you reset your mindset. New day, new password."},
+            {t:"Spilled Coffee", m:"Just a stain, bro. Don't let it stain your mood."},
+            {t:"Lost Keys", m:"You'll find them when you stop looking. Same with happiness, bro."},
+            {t:"Alarm Snooze", m:"The dream is real, but you gotta wake up to chase it."},
+            {t:"Diet Fail", m:"One burger won't kill you. Enjoy the cheat meal, bro."},
+            {t:"Stubbed Toe", m:"Pain is temporary, bro. Walking it off makes you tougher."},
+            {t:"Argument", m:"Be the bigger person. Silence is sometimes the loudest answer."},
+            {t:"Criticism", m:"Take it as feedback, not an attack. Level up from it."},
+            {t:"Failure", m:"First Attempt In Learning. You didn't fail, you just found a way that doesn't work."},
+            {t:"Boredom", m:"Only boring people get bored. Find something legendary to do."},
+            {t:"Stress", m:"Take a deep breath. It's not that deep, bro. You got this."},
+            {t:"Overthinking", m:"Don't create problems that aren't there. Trust your gut."},
+            {t:"Late Bus", m:"More time to listen to your playlist. Vibe out."},
+            {t:"Bad Joke", m:"At least you tried to be funny. Points for effort."},
+            {t:"Awkward Silence", m:"Own the silence. Make it a power move."},
+            {t:"Rejection", m:"It's just redirection to something better. Trust the process."},
+            {t:"Cold Tea", m:"Chug it. Caffeine is caffeine, bro."},
+            {t:"Messy Room", m:"Organized chaos. It's a sign of a genius mind."},
+            {t:"Homework", m:"Just get it done so you can game later. Speedrun it."},
+            {t:"Peer Pressure", m:"Be your own leader. Follow your own path, not the herd."},
+            {t:"FOMO", m:"Joy Of Missing Out. Sometimes staying in is the real flex."},
+            {t:"Broken Phone", m:"Material things break. Your spirit is unbreakable."},
+            {t:"Pimple", m:"Nobody notices it as much as you do. You're still handsome."},
+            {t:"Procrastination", m:"Do it now. Future you will thank you for it."},
+            {t:"Public Speaking", m:"Imagine everyone in their underwear. Classic trick."},
+            {t:"Lost Game", m:"GG. Go Next. You can't win them all."},
+            {t:"No Milk", m:"Black coffee it is. Hardcore mode enabled."},
+            {t:"Flat Tire", m:"Change it and keep rolling. Life is a journey, bumps happen."},
+            {t:"Unread Messages", m:"Reply when you have the energy. Protect your peace."},
+            {t:"Social Battery", m:"Recharge alone. It's okay to disconnect to reconnect."},
+            {t:"Gym Skip", m:"Muscle memory is real. Go harder tomorrow."},
+            {t:"Burnout", m:"Rest is part of the work. Take a break, don't quit."},
+            {t:"Confusion", m:"Ask questions. Staying curious keeps you young."},
+            {t:"Sore Throat", m:"Rest your voice, let your actions speak louder."},
+            {t:"Mosquito Bite", m:"Ignore the small irritations. Focus on the big picture."},
+            {t:"Sunburn", m:"You're just too hot to handle. Wear sunscreen next time."},
+            {t:"Forgot Name", m:"Just say 'Bro' or 'Champ'. Works every time."},
+            {t:"Life", m:"It's a game. Play it well, play it fair, and have fun."}
+        ];
+
+        function initGame() {
+            const size = Math.min(window.innerWidth - 30, 380);
+            canvas.width = size;
+            canvas.height = 450;
+            
+            // Draw initial static screen
+            let grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            grad.addColorStop(0, "#81D4FA"); grad.addColorStop(1, "#B3E5FC");
+            ctx.fillStyle = grad;
+            ctx.fillRect(0,0,canvas.width, canvas.height);
+            // Ground
+            ctx.fillStyle = "#388e3c";
+            ctx.fillRect(0, canvas.height-20, canvas.width, 20);
+        }
+
+        function startGame() {
+            stopAllAudio(); // Ensure clean slate
+            document.getElementById('startBtnOverlay').style.display = 'none';
+            document.getElementById('gameOverlay').style.display = 'none';
+            
+            bird = { y: 200, v: 0 };
+            pillars = [];
+            particles = [];
+            score = 0;
+            gameSpeed = 1.8; // Set to user preferred easier speed
+            frames = 0;
+            document.getElementById('scoreVal').innerText = "0";
+            isGameRunning = true;
+            loop();
+        }
+        
+        function resetGameUI() {
+            stopAllAudio();
+            document.getElementById('gameOverlay').style.display = 'none';
+            document.getElementById('startBtnOverlay').style.display = 'block';
+            initGame();
+        }
+
+        function loop() {
+            if(!isGameRunning) return;
+            ctx.clearRect(0,0,canvas.width, canvas.height);
+            
+            // Very slow acceleration
+            gameSpeed += 0.00005; 
+            frames++;
+            
+            // Sky Gradient Animation
+            let hue = (frames * 0.1) % 360;
+            let grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            grad.addColorStop(0, `hsl(200, 70%, 70%)`);
+            grad.addColorStop(1, "#E1F5FE");
+            ctx.fillStyle = grad;
+            ctx.fillRect(0,0,canvas.width, canvas.height);
+
+            // Bird Physics - Lighter feel
+            bird.v += 0.25; // Lower gravity
+            bird.y += bird.v;
+            
+            // Trail
+            if(frames % 5 === 0) particles.push({x: 50, y: bird.y, alpha: 1, size: Math.random()*5+2});
+            particles.forEach((p, i) => {
+                p.x -= gameSpeed; p.alpha -= 0.02;
+                if(p.alpha <= 0) particles.splice(i, 1);
+                else {
+                    ctx.globalAlpha = p.alpha; ctx.fillStyle = "#fff";
+                    ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill(); ctx.globalAlpha = 1;
+                }
+            });
+            
+            // Draw Bird (Smaller Radius = 18)
+            const birdSize = 18; 
+            ctx.save(); ctx.beginPath(); ctx.arc(50, bird.y, birdSize, 0, Math.PI*2); ctx.clip();
+            if(playerImg.complete && playerImg.naturalWidth !== 0) {
+                 ctx.drawImage(playerImg, 50-birdSize, bird.y-birdSize, birdSize*2, birdSize*2);
+            } else {
+                 ctx.fillStyle = "#FFD700"; ctx.fill();
+                 ctx.strokeStyle = "#fff"; ctx.lineWidth=2; ctx.stroke();
+                 ctx.fillStyle = "#000"; ctx.beginPath(); ctx.arc(58, bird.y-5, 4, 0, Math.PI*2); ctx.fill(); 
+            }
+            ctx.restore();
+
+            // Pillars - Wide spacing (190px gap), Less frequent spawning
+            if(frames % Math.floor(150 * (2/gameSpeed)) === 0) {
+                let gap = 190; // EASIER GAP
+                let topH = Math.random() * (canvas.height - gap - 50) + 30;
+                let diff = difficulties[Math.floor(Math.random() * difficulties.length)];
+                pillars.push({ x: canvas.width, top: topH, gap: gap, d: diff, passed:false });
+            }
+
+            pillars.forEach(p => {
+                p.x -= gameSpeed;
+                // Pillar
+                ctx.fillStyle = "#263238";
+                ctx.fillRect(p.x, 0, 50, p.top);
+                ctx.fillRect(p.x, p.top + p.gap, 50, canvas.height - (p.top+p.gap));
+                // Banner
+                ctx.fillStyle = "#b71c1c";
+                ctx.fillRect(p.x-5, p.top-35, 60, 30);
+                ctx.fillStyle = "#fff"; ctx.font = "bold 14px sans-serif"; ctx.fillText(p.d.t, p.x+3, p.top-15);
+
+                // Collision
+                if(50 + birdSize > p.x && 50 - birdSize < p.x + 50) {
+                    if(bird.y - birdSize + 6 < p.top || bird.y + birdSize - 6 > p.top + p.gap) {
+                        endGame(p.d.m);
+                    }
+                }
+                // Score
+                if(p.x + 50 < 50 - birdSize && !p.passed) {
+                    score++; p.passed = true;
+                    document.getElementById('scoreVal').innerText = score;
+                    playSmartAudio(scoreAudio);
+                }
+            });
+
+            // Ground
+            ctx.fillStyle = "#2e7d32";
+            ctx.fillRect(0, canvas.height-20, canvas.width, 20);
+            ctx.fillStyle = "#43a047"; // grass top
+            ctx.fillRect(0, canvas.height-20, canvas.width, 4);
+
+            if(bird.y > canvas.height-20 || bird.y < 0) endGame("Bro, stay on screen!");
+            
+            gameLoop = requestAnimationFrame(loop);
+        }
+
+        function endGame(msg) {
+            isGameRunning = false;
+            cancelAnimationFrame(gameLoop);
+            playSmartAudio(crashAudio);
+            
+            document.getElementById('lossMsg').innerHTML = `"${msg}"`;
+            document.getElementById('gameOverlay').style.display = 'block';
+        }
+
+        // Controls
+        const flap = (e) => { 
+            if(e.type === 'touchstart') e.preventDefault();
+            if(isGameRunning) bird.v = -4.5; // Lighter jump
+        };
+        canvas.addEventListener('mousedown', flap);
+        canvas.addEventListener('touchstart', flap, {passive: false});
+
+    </script>
+</body>
+</html>
